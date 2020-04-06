@@ -1,0 +1,12 @@
+sdk-version: 0.13.55
+name: Hostel-Management-System
+source: daml
+init-script: Main:initialize
+parties:
+  - Alice
+  
+version: 0.0.1
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script

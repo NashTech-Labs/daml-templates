@@ -1,0 +1,33 @@
+
+module MainTest where
+
+import Utilities
+import Main
+
+
+test = scenario do
+  
+  
+  parties@[hostler1, hostler2, hostler3, hostler4] <- makePartiesFrom ["user1", "user2", "user3", "user4"]
+  manager <- getParty "Manager"
+  service_Provider <- getParty "XYZ Service Provider"
+
+  
+  let finalContract = Money_Transfer_Agreement with issuer = manager; owner = service_Provider  ;money = 0 ;signatories = manager :: parties 
+
+  -- Manager intiates confirmation contract with hostlers as observer 
+  confirmation_Agreement <- manager `submit` do
+    create Confirmation_Agreement with manager; service_Provider = service_Provider; money = 10000 ;finalContract; alreadySigned = [manager]
+  
+  -- Hostlers approve contract and become part of signatory 
+  confirmation_Agreement <- hostler1 `submit` do
+    exercise confirmation_Agreement Approve with signer = hostler1
+  confirmation_Agreement <- hostler2 `submit` do
+    exercise confirmation_Agreement Approve with signer = hostler2
+  confirmation_Agreement <- hostler3 `submit` do
+    exercise confirmation_Agreement Approve with signer = hostler3
+  confirmation_Agreement <- hostler4 `submit` do
+    exercise confirmation_Agreement Approve with signer = hostler4
+  -- Manager can pay to service provider only and only if every party approves contract. 
+  manager `submit` do
+    exercise confirmation_Agreement DoPay with newMoney = 10000

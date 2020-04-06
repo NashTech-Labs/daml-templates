@@ -1,0 +1,62 @@
+-- Copyright (c) 2020 The DAML Authors. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+
+module Main where
+
+import DA.List
+
+
+template Money_Transfer_Agreement
+  with
+    issuer : Party
+    owner : Party
+    money : Int
+    signatories: [Party]
+    
+  where
+    signatory signatories
+    ensure
+      unique signatories
+  
+template Confirmation_Agreement
+  with
+    manager :Party
+    service_Provider :Party
+    money : Int
+    finalContract: Money_Transfer_Agreement
+    alreadySigned: [Party]
+  where
+    signatory alreadySigned
+    observer finalContract.signatories
+    ensure
+      
+      unique alreadySigned
+
+    
+    let toSign = filter (`notElem` alreadySigned) finalContract.signatories
+
+    choice Approve : ContractId Confirmation_Agreement with
+        
+        signer : Party
+      controller signer
+        do
+          
+          assert (signer `elem` toSign)
+          create this with alreadySigned = signer :: alreadySigned
+
+    
+    
+    
+-- Manager can pay to service provider by createting Money_Transfer_Conract,
+-- only and only if every party approves Confirmation_Aggrement. 
+    controller manager can
+      DoPay : ContractId Money_Transfer_Agreement
+        with newMoney : Int
+        do
+          assert (sort alreadySigned == sort finalContract.signatories)
+          create finalContract with money = newMoney
+          
+          
+
+
