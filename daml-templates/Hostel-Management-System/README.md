@@ -17,7 +17,8 @@ daml build
 ## Test
 
 ```bash
-daml damlc -- test --files daml/Tests/MainTest.daml
+daml damlc -- test --files daml/com.knoldus.example.daml/Tests/MainTest.daml
+
 ```
 ## Running Scenarios
 Open visual studio
