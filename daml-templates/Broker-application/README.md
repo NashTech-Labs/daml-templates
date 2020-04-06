@@ -21,7 +21,7 @@ daml build
 <h2>Test</h2>
 
 ```
-cd daml
+cd Tests/
 ```
 
 ```
