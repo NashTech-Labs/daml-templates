@@ -1,0 +1,21 @@
+sdk-version: 0.13.55
+name: ProductChain
+source: daml
+init-script: Setup:initialize
+
+parties:
+  - manufacturer
+  - wholesaler
+  - Nischal
+version: 0.0.1
+exposed-modules:
+  - Main
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script
+codegen:
+  scala:
+    package-prefix: com.knoldus.model
+    output-directory: scala-codegen/src/main/scala
+    verbosity: 2

@@ -1,0 +1,82 @@
+-- Copyright (c) 2020 The DAML Authors. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+module Tests.Main where 
+
+import Main
+
+-- first case where product is sell to distributor and than consumer
+test_first  = scenario do
+  emami <- getParty "manufacturer"
+  bigbazar <- getParty "SuperMarket"
+  buyer <- getParty "Nishchal"
+
+  product <- submit emami do 
+    create Product
+      with
+      manufacturer = emami
+      wholesaler = emami
+      consumer = emami
+      ownership=emami
+      name = "PAPERBOARD"
+
+
+  owner <- submit emami do 
+    exercise product Transfer
+      with newOwner = bigbazar,newWholeSaler=bigbazar,newConsumer=bigbazar
+
+  accept_wholesaler <- submit bigbazar do
+    exercise owner AcceptOwnership
+
+  
+  newOwner <- submit bigbazar do 
+    exercise accept_wholesaler Transfer
+      with newOwner = buyer,newWholeSaler = bigbazar,newConsumer = buyer
+
+  submit buyer do
+    exercise newOwner AcceptOwnership          
+  
+--case where proposal is given to the Wholesaler
+
+test_second  = scenario do
+  emami <- getParty "manufacturer"
+  bigbazar <- getParty "SuperMarket"
+  buyer <- getParty "Nishchal"
+  
+  iouProposal <- submit emami do
+    create Proposal with
+      product = Product with
+        manufacturer = emami
+        wholesaler = bigbazar
+        consumer=bigbazar
+        ownership=emami   
+        name = "Coated"
+          
+  submit bigbazar do
+    exercise iouProposal IouProposal_Accept
+    
+-- case where consumer purchase the product from the wholesaler     
+    
+    
+
+
+    
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
