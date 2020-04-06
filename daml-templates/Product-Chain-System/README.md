@@ -1,4 +1,4 @@
-# DAML_CRUD-
+# Product Chain System
 
 ## Following example shows Tri-party contract between
  1: Manufacturer
