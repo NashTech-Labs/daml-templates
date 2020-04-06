@@ -55,7 +55,7 @@ test_second  = scenario do
   submit bigbazar do
     exercise iouProposal IouProposal_Accept
     
--- case where consumer purchase the product from the wholesaler     
+    
     
     
 
