@@ -1,7 +1,7 @@
 -- Copyright (c) 2020 The DAML Authors. All rights reserved.
 -- SPDX-License-Identifier: Apache-2.0
 
-module Scenario where
+module Tests.Scenario where
 
 import Main
 
@@ -11,7 +11,7 @@ test_One = scenario do
 
   issuerDeematId <- submit broker do
   --availabe no of shares with the broker
-    create Deemat with 
+    create Demat with 
       owner = broker 
       broker = broker
       amount = 1000
