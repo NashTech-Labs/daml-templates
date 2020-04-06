@@ -1,0 +1,46 @@
+-- Copyright (c) 2020 The DAML Authors. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+module Scenario where
+
+import Main
+
+test_One = scenario do 
+  broker <- getParty "Broker"
+  upanshu <- getParty "Upanshu"
+
+  issuerDeematId <- submit broker do
+  --availabe no of shares with the broker
+    create Deemat with 
+      owner = broker 
+      broker = broker
+      amount = 1000
+      max_amount = 1000
+      buy_Share = "Reliance"
+      
+--the broker now has a 1000 share to give it to the users
+  issuerDeemat <- submit broker do 
+    fetch issuerDeematId
+  assert(issuerDeemat.owner == broker && issuerDeemat.amount == 1000)
+
+--autorizing the user so that his/her request can be accepted
+  upanshuDeematId <- submit broker do 
+    exercise issuerDeematId AuthorizeInvestor with 
+      investor = upanshu
+      updated_Token = 1000
+
+--user upanshu will request 5 shares from the broker
+  upanshuRequestId <- submit upanshu do 
+    exercise upanshuDeematId RequestShare with requestQuantity = 10
+
+--accepting user request
+  (issuerDeematId, upanshusDeematId) <- submit broker do 
+    exercise issuerDeematId AcceptRequest with requestId = upanshuRequestId
+
+--upanshu recieved 5 shares of Reliance as requested
+  upanshuAccount <- submit upanshu do fetch upanshusDeematId 
+  assert(upanshuAccount.amount == 10)
+
+--the broker now has 995 shares left
+  issuerDeemat <- submit broker do fetch issuerDeematId 
+  assert(issuerDeemat.amount == 990)

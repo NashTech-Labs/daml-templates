@@ -1,0 +1,77 @@
+-- Copyright (c) 2020 The DAML Authors. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+
+module Main where
+--deemat account through which requests are processed
+template Deemat
+  with
+    owner : Party
+    broker : Party
+    amount : Int
+    max_amount : Int
+    buy_Share : Text
+
+  where
+    ensure amount >= 0 && amount <= max_amount
+    signatory broker
+    observer owner
+
+    controller broker can 
+--autorization of user. unautorized user will not be able to make requests
+      nonconsuming AuthorizeInvestor : ContractId Deemat   --Makes a choice non-consuming,exercising the choice does not archive the contract.
+        with 
+          investor : Party
+          updated_Token : Int
+        
+        do create Deemat with 
+            owner = investor
+            broker
+            amount = 0
+            max_amount = updated_Token
+            buy_Share
+--updating the account after buying and adding amount to company account
+      BuyShares : (ContractId Deemat, ContractId Deemat) 
+        with
+          quantity : Int
+          toDeematId : ContractId Deemat 
+        do 
+          remaining_amount <- create this with amount = amount - quantity 
+          toDeemat <- fetch toDeematId
+          _ <- exercise toDeematId Archive 
+          updatedAccount <- create toDeemat with amount = toDeemat.amount + quantity
+          return(remaining_amount, updatedAccount)
+
+--accepting user request 
+      nonconsuming AcceptRequest: (ContractId Deemat, ContractId Deemat)
+        with requestId : ContractId ShareRequest
+        do 
+          request <- fetch requestId
+          exercise self BuyShares with
+            quantity = request.quantity
+            toDeematId = request.deematId
+
+
+    controller owner can
+--owner can create a share request
+      nonconsuming RequestShare : ContractId ShareRequest
+        with 
+          requestQuantity : Int
+        do create ShareRequest with 
+            broker = this.broker
+            owner = this.owner
+            deematId = self
+            quantity = requestQuantity
+            buy_Share = this.buy_Share
+
+--user can request shares using this template
+template ShareRequest
+  with
+    broker : Party
+    owner : Party
+    deematId : ContractId Deemat
+    quantity : Int
+    buy_Share : Text
+  where
+    signatory owner, broker
+  

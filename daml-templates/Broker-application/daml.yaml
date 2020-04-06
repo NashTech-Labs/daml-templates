@@ -1,0 +1,12 @@
+sdk-version: 0.13.55
+name: templateStatefulApplication
+source: daml
+init-script: Setup:initialize
+parties:
+  - Alice
+  - Bob
+version: 0.0.1
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script
