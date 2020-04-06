@@ -1,4 +1,3 @@
-
 # Hostel Mangement System
 
 The objective of the Proposed System is to improve Hostel Services provided by 3rd Party Service Provider by using the Immutable Smart Contracts. 
@@ -10,18 +9,28 @@ The objective of the Proposed System is to improve Hostel Services provided by 3
 
 
 
-## Compile
-Create dar file using
+## Building
+To Compile the project:
 ```bash
 daml build
 ```
+## Test
 
-
-## Scenario Execution
-
-Run test scenarios using 
 ```bash
-daml damlc -- test --files daml/MainTest.daml
+daml damlc -- test --files daml/Tests/MainTest.daml
+```
+## Running Scenarios
+Open visual studio
+Click on Scenario.daml
+Now click on:
+```bash
+Scenario results
 ```
 
 
+
+## Scenario Covered
+
+1. Manager initiates and submits Confirmation-Contract.
+2. Each involved Party Approves the Confirmation-Contract.
+3. After everyone's approval, the Manager can initiate Money-Transfer Contract with Service Provider.  

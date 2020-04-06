@@ -1,7 +1,7 @@
 
-module MainTest where
+module Tests.MainTest where
 
-import Utilities
+import Tests.Utilities
 import Main
 
 

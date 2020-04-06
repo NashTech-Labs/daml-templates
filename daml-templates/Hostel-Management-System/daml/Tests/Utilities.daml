@@ -2,7 +2,7 @@
 -- SPDX-License-Identifier: Apache-2.0
 
 
-module Utilities where
+module Tests.Utilities where
 
 makePartiesFrom names =
   mapA getParty names
